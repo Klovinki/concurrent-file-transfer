@@ -1,11 +1,10 @@
 import socket
 import sys
 
-filename = "Paket"
 
-def write_file(client_socket):
+def write_file(client_socket , filename):
     ## Open the file in write mode ("w")
-    fp = open(filename, "w")
+    fp = open(filename, "wb")
     if(fp == None) : ## Check if file opening failed
         print("[-]Error in creating file."); ## Print error message
         exit(1); ## Exit the program
@@ -14,7 +13,7 @@ def write_file(client_socket):
     while True:
         ## Receive data from the client socket (client_socket) into the buffer
         ## recv returns the number of bytes received, 0 if connection closed, -1 on error
-        n = client_socket.recv(1024).decode().strip()
+        n = client_socket.recv(1024)
         if(not n): ## If connection closed (n=0) or error (n<0)
             break; ## Exit the loop
 
@@ -26,7 +25,7 @@ def write_file(client_socket):
 
     return
 
-def start_client(host="localhost", port=12345):
+def start_client(host, port, file_name):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print("Server socket created. ")
     try:
@@ -34,7 +33,7 @@ def start_client(host="localhost", port=12345):
         print(f"Connecting to {host}:{port}...")
         print("Connected to server!")
 
-        write_file(client_socket)
+        write_file(client_socket , file_name)
         print("Data written in the text file")
 
         client_socket.close()
@@ -44,7 +43,7 @@ def start_client(host="localhost", port=12345):
         print("[ERROR] Unable to connect to the server.")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python client.py <host> <port>")
+    if len(sys.argv) != 4:
+        print("Usage: python client.py <host> <port> <file_name>")
     else:
-        start_client(sys.argv[1], int(sys.argv[2]))
+        start_client(sys.argv[1], int(sys.argv[2]), str(sys.argv[3]))
