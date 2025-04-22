@@ -10,9 +10,9 @@
 
 #define SIZE 1024
 
-void send_file(int client_sock) {
+void send_file(int client_sock, const char* file_name) {
     char buffer[SIZE];
-    std::ifstream file("Logo_Institut_Teknologi_Bandung.png", std::ios::binary);
+    std::ifstream file(file_name, std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "[-]Failed to open file.\n";
         close(client_sock);
@@ -37,19 +37,16 @@ void send_file(int client_sock) {
     std::cout << "[+]Connection to client closed.\n\n";
 }
 
-void handle_client(int client_sock) {
-    send_file(client_sock);
-}
-
 int main(int argc, char* argv[]) {
-    if(argc != 3)
+    if(argc != 4)
     {
-        printf("Usage: ./server <address> <port>\n");
+        printf("Usage: ./server <address> <port> <filename>\n");
         return 1;
     }
 
     const char *ip = argv[1];
     int port = atoi(argv[2]);
+    const char* file_name = argv[3];
 
     int server_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (server_sock < 0) {
@@ -94,7 +91,7 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "[+]Client connected.\n";
 
-        std::thread t(handle_client, client_sock);
+        std::thread t(send_file, client_sock, file_name);
         t.detach();  // Automatically reclaim resources when thread finishes
     }
 
