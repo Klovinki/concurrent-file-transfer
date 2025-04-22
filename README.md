@@ -11,7 +11,7 @@ example:
 
 Client:
 
-`python3 client.py <address> <port>`
+`$ python3 client.py <address> <port>`
 
 example:
 `$ python3 client.py 127.0.0.1 8080`
